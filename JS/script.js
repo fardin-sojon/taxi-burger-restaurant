@@ -7,15 +7,6 @@ const loadCategory = () => {
     .then(data => displayCategory(data.categories))
 };
 
-const loadFoods = (id) => {
-  const url = id
-    ? ` https://taxi-kitchen-api.vercel.app/api/v1/categories/${id}`
-    : `https://taxi-kitchen-api.vercel.app/api/v1/foods/random`
-  fetch(url)
-    .then(res => res.json())
-    .then(data => displayFoods(data.foods))
-}
-
 const displayCategory = (categories) => {
   // console.log(categories);
   const catContainer = document.getElementById('category-container');
@@ -34,7 +25,7 @@ const displayCategory = (categories) => {
 
     const categoryCard = document.createElement('div')
     categoryCard.innerHTML = `
-            <button onclick ="loadFoods(${categorie.id})" class="btn btn-block shadow btn-category">
+            <button id="category-btn-${categorie.id}" onclick="loadFoods(${categorie.id})" class="btn btn-block shadow btn-category">
                 <img
                 src="${categorie.categoryImg}"alt=""
                 class="w-10"/>${categorie.categoryName}
@@ -45,12 +36,24 @@ const displayCategory = (categories) => {
   }
 }
 
-// Modal
-const loadFoodDetails = (id) => {
-  const url = ` https://taxi-kitchen-api.vercel.app/api/v1/foods/${id}`;
+const loadFoods = (id) => {
+  const url = id
+    ? ` https://taxi-kitchen-api.vercel.app/api/v1/categories/${id}`
+    : `https://taxi-kitchen-api.vercel.app/api/v1/foods/random`;
+
+    // 1. All active class remve
+    const catBtns = document.querySelectorAll(".btn-category");
+    // console.log(catBtns);
+    catBtns?.forEach(btn => btn.classList.remove("active"))
+
+    // 2. click to active class
+  const currentBtn = document.getElementById(`category-btn-${id}`);
+  console.log(currentBtn);
+  currentBtn?.classList.add("active")
+
   fetch(url)
     .then(res => res.json())
-    .then(data => displayDetailsModal(data.details)) // Object
+    .then(data => displayFoods(data.foods))
 }
 
 // {
@@ -103,6 +106,16 @@ const displayFoods = (foods) => {
   };
 }
 
+// Modal
+const loadFoodDetails = (id) => {
+  const url = ` https://taxi-kitchen-api.vercel.app/api/v1/foods/${id}`;
+  fetch(url)
+    .then(res => res.json())
+    .then(data => displayDetailsModal(data.details)) // Object
+}
+
+
+
 // {
 //     "id": 52775,
 //     "title": "Vegan Lasagna",
@@ -133,6 +146,6 @@ const displayDetailsModal = (food) =>{
 
 }
 
-loadFoods(11)
+loadFoods(6)
 
 loadCategory()
